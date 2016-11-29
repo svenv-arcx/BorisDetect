@@ -62,6 +62,8 @@ public final class PreviewScanner {
                 try {
                     baos.close();
                 } catch (Exception e) {
+                    Log.w(TAG, "Exception while closing stream");
+                    e.printStackTrace();
                 }
                 long stopTime = System.nanoTime();
                 Log.d(TAG, "bitmap conversion + face detection took " +
