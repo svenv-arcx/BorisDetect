@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.security.InvalidParameterException;
 
 /**
  * Utility class to scan a camera preview stream for faces,
@@ -26,10 +27,13 @@ public final class PreviewScanner {
 
     private final FaceDetector mFaceDetector;
     private final int mWidth, mHeight;
+    private final int mExpectedBufferSize;
 
     public PreviewScanner(int width, int height) {
         mWidth = width;
         mHeight = height;
+        // both NV12 and NV21 are 12 bits per pixel
+        mExpectedBufferSize = getSizeYUV420_NV12(mWidth, mHeight);
         mFaceDetector = new FaceDetector(width, height, 1);
     }
 
@@ -44,6 +48,9 @@ public final class PreviewScanner {
         private final Bitmap mPreviewBmp;
 
         Frame(byte[] previewData) {
+            if (previewData.length != mExpectedBufferSize)
+                throw new InvalidParameterException(
+                        String.format("invalid preview frame size"));
             mPreviewData = previewData;
             // Check for a face the 'fast, native' way.
             // It doesn't matter if the preview data is in NV12 or NV21 format -
@@ -97,6 +104,11 @@ public final class PreviewScanner {
         g = g>255? 255 : g<0 ? 0 : g;
         b = b>255? 255 : b<0 ? 0 : b;
         return 0xff000000 | (b<<16) | (g<<8) | r;
+    }
+
+    private static int getSizeYUV420_NV12(int width, int height) {
+        // 12 bits per pixel
+        return (width * height * 12 + 7) / 8;
     }
 
     /**
