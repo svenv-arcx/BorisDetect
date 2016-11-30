@@ -84,7 +84,7 @@ public final class PreviewScanner {
 
         public Bitmap calcDisplayableBitmap() {
             // If running ICS, the preview stream is NV21, and mPreviewBmp will look ok.
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+            if (Build.VERSION.SDK_INT <= 15)
                 return mPreviewBmp;
             // On Marshmallow, the preview stream is NV12. Since we haven't got any
             // way to natively convert NV12, we'll do it in Java.
