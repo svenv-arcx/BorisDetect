@@ -50,7 +50,7 @@ public final class PreviewScanner {
         Frame(byte[] previewData) {
             if (previewData.length != mExpectedBufferSize)
                 throw new InvalidParameterException(
-                        String.format("invalid preview frame size"));
+                        "invalid preview frame size");
             mPreviewData = previewData;
             // Check for a face the 'fast, native' way.
             // It doesn't matter if the preview data is in NV12 or NV21 format -
@@ -73,7 +73,7 @@ public final class PreviewScanner {
                     e.printStackTrace();
                 }
                 long stopTime = System.nanoTime();
-                Log.d(TAG, "bitmap conversion + face detection took " +
+                Log.d(TAG, "face detection took " +
                         (stopTime-startTime)/1000000 + " ms");
             }
         }
@@ -86,11 +86,16 @@ public final class PreviewScanner {
             // If running ICS, the preview stream is NV21, and mPreviewBmp will look ok.
             if (Build.VERSION.SDK_INT <= 15)
                 return mPreviewBmp;
+            long startTime = System.nanoTime();
             // On Marshmallow, the preview stream is NV12. Since we haven't got any
             // way to natively convert NV12, we'll do it in Java.
-            int[] colours = new int[mWidth*mHeight];
+            int[] colours = new int[mWidth * mHeight];
             convertYUV420_NV12toRGB8888(colours, mPreviewData, mWidth, mHeight);
-            return Bitmap.createBitmap(colours, mWidth, mHeight, Bitmap.Config.ARGB_8888);
+            Bitmap bmp = Bitmap.createBitmap(colours, mWidth, mHeight, Bitmap.Config.ARGB_8888);
+            long stopTime = System.nanoTime();
+            Log.d(TAG, "bitmap conversion took " +
+                    (stopTime-startTime)/1000000 + " ms");
+            return bmp;
         }
     }
 
