@@ -36,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
             PreviewScannerEx.Frame frame = scanner.createFromPreviewData(data);
             if (frame.hasFace())
                 faceView.setImageBitmap(frame.calcDisplayableBitmap());
-            camera.setOneShotPreviewCallback(this);
+            try {
+                camera.setOneShotPreviewCallback(this);
+            } catch (Exception e) {}
         }
     }
 
@@ -52,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             camera = openFrontFacingCamera();
-            if (camera == null)
-                camera = Camera.open();
             if (camera != null) {
                 try {
                     Camera.Parameters p = camera.getParameters();
