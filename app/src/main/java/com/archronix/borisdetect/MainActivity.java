@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Camera camera;
     private ImageView faceView;
-    private PreviewScanner scanner;
+    private PreviewScannerEx scanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             if (data == null) {
                 return ;
             }
-            PreviewScanner.Frame frame = scanner.createFromPreviewData(data);
+            PreviewScannerEx.Frame frame = scanner.createFromPreviewData(data);
             if (frame.hasFace())
                 faceView.setImageBitmap(frame.calcDisplayableBitmap());
             camera.setOneShotPreviewCallback(this);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     p = camera.getParameters();
                     int width = p.getPreviewSize().width;
                     int height = p.getPreviewSize().height;
-                    scanner = new PreviewScanner(width, height);
+                    scanner = new PreviewScannerEx(camera, width, height);
                     camera.setPreviewDisplay(holder);
                     camera.setOneShotPreviewCallback(new MyPreviewCallback());
                 } catch (IOException exception) {
